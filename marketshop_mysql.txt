@@ -1,0 +1,153 @@
+mysql codes in Market shop:
+/////////////////////////////////////////////////////////////////////
+Tables:
+
+create table public(p_id int NOT NULL PRIMARY KEY, public_name varchar(50),phone bigint,addr varchar(50),dist varchar(50),state varchar(50),pincode int);
+create table shop_details(shop_id int NOT NULL PRIMARY KEY ,shop_rent int, place varchar(20));
+
+CREATE TABLE shopkeeper(shopkeeper_ID INT NOT NULL PRIMARY KEY,name varchar(50),address varchar(50),valid_pass varchar(50),contactno varchar(11));
+
+create table bill_payment(bill_id int NOT NULL , cost int,shop_id int ,shopkeeper_id int, PRIMARY KEY(bill_id),FOREIGN KEY(shop_id) REFERENCES shop_details(shop_id), FOREIGN KEY(shopkeeper_id) REFERENCES shopkeeper(shopkeeper_id));
+
+
+create table shop(shop_id int,shopkeeper_id int,start_date date,category varchar(20),license_period smallint,extension_period smallint,pending_charge int,performance float,foreign key(shop_id) REFERENCES shop_details(shop_id),FOREIGN KEY(shopkeeper_id) REFERENCES shopkeeper(shopkeeper_id));
+
+create table feedback(shop_id int,shopkeeper_ID int,public_id int,feedback text,rating smallint,FOREIGN KEY(public_id) REFERENCES public(public_id));
+/////////////////////////////////////////////////////////////////////
+
+inserting data in tables:
+shop:
+insert into  shop values(501,701,'2022-09-20','nescafe',100,60,10000,3.5);
+insert into shop values(502,703,'2022-09-22','generalstore',150,30,15000,3.0);
+insert into shop value(503,704,'2022-07-24','foodstall',100,30,10000,3.0);
+insert into shop value(504,705,'2022-11-16','generalstore',100,30,12000,3.5);
+
+
+public:
+insert into public values(101,'deva',1234567890,'hindupur','anantapur','andhra',515212);
+insert into public values(102,'teja',1234567891,'hyderabad','hyderabad','telangana',515213);
+insert into public values(103,'gnane',1234567892,'mahaboobnagar','mahaboobnagar','telangana',516212);
+insert into public values(104,'n_4',1234567893,'ad_4','d_4','s_4',543213);
+insert into public values(105,'n_5',1234567843,'ad_5','d_5','s_5',533213);
+insert into public values(106,'n_6',1234567894,'ad_6','d_6','s_7',433213);
+insert into public values(107,'n_7',1234567895,'ad_7','d_7','s_8',543203);
+insert into public values(108,'n_8',1234565893,'ad_8','d_4','s_4',543213);
+insert into public values(109,'n_9',1234567899,'ad_9','d_9','s_9',643213);
+insert into public values(110,'n_10',1234537893,'ad_10','d_10','s_10',543219);
+
+shop_details:
+
+insert into shop_details values(501,5000,'kalam');
+insert into shop_details values(502,6000,'Foodcourt');
+insert into shop_details values(503,6000,'Foodcourt');
+insert into shop_details values(504,7000,'bquaters');
+insert into shop_details values(505,8000,'dquaters');
+
+insert into shop_details values(506,10000,'block8');
+
+shopkeeper:
+
+insert into shopkeeper values(701,'sk_1','s_ad_1','yes',1234565891);
+insert into shopkeeper values(702,'sk_2','s_ad_2','yes',1234565892);
+
+insert into shopkeeper values(703,'sk_3','s_ad_3','yes',1234565893);
+insert into shopkeeper values(704,'sk_4','s_ad_4','yes',1234565894);
+insert into shopkeeper values(705,'sk_5','s_ad_5','yes',1234565895);
+insert into shopkeeper values(706,'sk_6','s_ad_6','yes',1234565896);
+insert into shopkeeper values(707,'sk_7','s_ad_7','yes',1234565897);
+insert into shopkeeper values(708,'sk_8','s_ad_8','yes',1234565898);
+
+bill_payment:
+
+insert into bill_payment values(901,1000,501,701);
+insert into bill_payment values(902,1000,502,703);
+insert into bill_payment values(903,1000,503,704);
+insert into bill_payment values(904,1400,501,701);
+insert into bill_payment values(905,1040,504,705);
+insert into bill_payment values(906,5050,505,706);
+
+
+
+////////////////////////////////////////////////////////////////////////////
+
+
+Triggers of the market shop :
+
+Delimiter $$
+
+create trigger update_rating AFTER INSERT ON feedback FOR EACH ROW 
+BEGIN
+DECLARE avg_rating FLOAT DEFAULT 0;
+SELECT SUM(rating)/count(*) INTO avg_rating FROM feedback where feedback.shopkeeper_ID=new.shopkeeper_ID AND feedback.shop_id=new.shop_id;
+
+UPDATE shop SET Performance=avg_rating where shop.shopkeeper_id=new.shopkeeper_id AND shop.shop_id=new.shop_id;
+
+END $$
+DELIMITER ;
+
+
+Delimiter $$
+create trigger after_billpayment AFTER INSERT on bill_payment 
+FOR EACH ROW
+BEGIN
+UPDATE shop set pending_charge=pending_charge-new.cost where shop.shopkeeper_id=new.shopkeeper_id and shop.shop_id=new.shop_id;
+
+END $$
+Delimiter;
+
+/////////////////////////////////////////////////////////////////////////
+inserting in  feedback for checking the trigger:
+
+insert into feedback values('502','703','102','nice',4);
+
+
+insert into feedback values('503','704','102','nice',4);
+
+
+ insert into feedback values('504','705','102','nice',4);
+
+
+insert into feedback values('504','705','103','nice',3);
+
+
+insert into feedback values('503','704','103','nice',3);
+
+
+insert into feedback values('503','704','110','nice',3);
+
+
+ insert into feedback values('502','703','105','nice',3);
+
+////////////////////////////////////////////////////////////////////////////////
+queries:
+
+1.Details of shop details of different areas of the campus:
+Mysql:select * from shop NATURAL JOIN shop_details; 
+
+2.Details of shopkeepers : 
+It contains the details of the shopkeeper like name ,address and mainly security pass. 
+mysql query: select * from shopkeeper; 
+Mysql query: select shopkeeper_ID,valid_pass from shopkeeper; 
+
+3.Pending charges from each shops: 
+We can also show the shops with pending bills and total anount of pending_charges 
+Mysql query: select shop_id,pending_charge from shop; 
+
+4.Summary of performance of the shop: 
+It shows the shop_id and shopkeeper id and mainly performance of the shop which is given by the 
+Mysql query: select shop_id,shopkeeper_id,performance from shop; 
+
+
+5. Reminders for expiring license agreement period: 
+It shows the list of the shops whose license will expire within a month 
+Mysql query : SELECT shopkeeper_id, shop_id, DATEDIFF (DATE_ADD(Start_date, INTERVAL 
+(license_period+Extension Period) MONTH), CURDATE()) as Diff FROM Shope WHERE DATEDIFF 
+(DATE ADD (Start Date, INTERVAL (License_Period+Extension_Period)MONTH), CURDATE()) <<= 30;
+
+
+
+
+
+
+
+

@@ -1,0 +1,112 @@
+                                                               ALL TABLES CREATED:
+
+CREATE TABLE guesthouse(gh_id varchar(10) PRIMARY KEY,location varchar(50),name varchar(50));
+CREATE TABLE cost(cost_id varchar (10) PRIMARY KEY,date_1 DATE ,amount INT,gh_id varchar(10),FOREIGN KEY (gh_id) REFERENCES guesthouse(gh_id));
+CREATE TABLE room_cost(rc_id varchar(10) PRIMARY KEY,amount INT,cause varchar(50));
+CREATE TABLE food_cost(f_id varchar(10) PRIMARY KEY,amount INT);
+CREATE TABLE guest(g_id varchar(10) PRIMARY KEY,name varchar(50),contactno BIGINT,city varchar(20),pin_code INT);
+CREATE TABLE room_service(rs_id varchar(10),service_type varchar(50));
+CREATE TABLE food_service(fs_id varchar(10),food_item varchar(50));
+CREATE TABLE room(r_id varchar(10) PRIMARY KEY,gh_id varchar(10),cost INT,available varchar(4),has_ac varchar(4),bed_count INT,floor INT,FOREIGN KEY (gh_id) REFERENCES guesthouse(gh_id));
+CREATE TABLE staff(s_id varchar(10) PRIMARY KEY,name varchar(50),contactno BIGINT,role varchar(30));
+CREATE TABLE bookings(r_id varchar(10),g_id varchar(10),start_date DATE,end_date DATE,PRIMARY KEY(r_id,g_id,start_date),FOREIGN KEY (r_id) REFERENCES room(r_id),FOREIGN KEY (g_id) REFERENCES guest(g_id));
+CREATE TABLE work_in (gh_id varchar(10),s_id varchar(10),date DATE ,PRIMARY KEY(gh_id,s_id,date),FOREIGN KEY (s_id) REFERENCES staff(s_id),FOREIGN KEY (gh_id) REFERENCES guesthouse(gh_id));
+CREATE TABLE bill(b_id varchar(10) PRIMARY KEY,g_id varchar(10),amount INT,FOREIGN KEY (g_id) REFERENCES guest(g_id));
+
+                                                                 MANUAL INSERTIONS:
+
+INSERT INTO guesthouse VALUES('gh_1','l_1','iitp_1'),('gh_2','l_2','iitp_2'),('gh_3','l_3','iitp_3'),('gh_4','l_1','iitp_4'),('gh_5','l_5','iitp_5'),('gh_6','l_1','iitp_6'),
+('gh_7','l_1','iitp_1'),('gh_8','l_3','iitp_1'),('gh_9','l_9','iitp_2'),('gh_10','l_1','iitp_2'),('gh_11','l_11','iitp_4'),('gh_12','l_12','iitp_3'),('gh_13','l_2','iitp_4');
+
+INSERT INTO cost VALUES ('c_1','2022-11-11',2000,'gh_1'),('c_2','2022-11-12',3000,'gh_1'),('c_3','2022-11-13',2000,'gh_2'),('c_4','2022-11-14',2000,'gh_2'),('c_5','2022-11-11',2000,'gh_1'),
+('c_6','2022-11-12',2000,'gh_1'),('c_7','2022-11-13',2000,'gh_3'),('c_8','2022-11-14',4000,'gh_1'),('c_9','2022-11-15',3000,'gh_4'),
+('c_10','2022-11-13',1500,'gh_3'),('c_11','2022-11-12',2000,'gh_1'),('c_12','2022-11-11',2000,'gh_4'),('c_13','2022-11-13',2000,'gh_1');
+
+INSERT INTO room_cost VALUES ('rc_1',1000,'rent'),('rc_2',1000,'rent'),('rc_3',1100,'rent'),('rc_4',1000,'rent'),('rc_5',1200,'rent'),('rc_6',1300,'rent'),('rc_7',1400,'rent'),
+('rc_8',1500,'rent'),('rc_9',1000,'rent'),('rc_10',1600,'rent'),('rc_11',1200,'rent'),('rc_12',1000,'rent'),('rc_13',1000,'rent'),('rc_14',1400,'rent'),('rc_15',1300,'rent');
+
+INSERT INTO food_cost VALUES('f_1',1000),('f_2',1000),('f_3',1000),('f_4',1100),('f_5',1000),('f_6',800),('f_7',1300),('f_8',1000),('f_9',1000),('f_10',700),('f_11',800),
+('f_12',1500),('f_13',1400),('f_14',1300),('f_15',1200),('f_16',1100),('f_17',900),('f_18',100);
+
+INSERT INTO guest VALUES ('g_1','n_1',1999999999,'city_1',500074),('g_2','n_1',2999999999,'city_2',500054),('g_3','n_1',3999999999,'city_3',500064),('g_4','n_1',4999999999,'city_4',500974),
+('g_5','n_1',5999999999,'city_2',500274),('g_6','n_1',6999999999,'city_1',500074),('g_7','n_1',7999999999,'city_5',500174),('g_8','n_1',8999999999,'city_4',500014),
+('g_9','n_1',9999999999,'city_4',500054),('g_10','n_1',9999999990,'city_3',500024),('g_11','n_1',9999999991,'city_6',500073),('g_12','n_1',9999999992,'city_5',510074);
+
+INSERT INTO room_service VALUES('rs_1','serve'),('rs_2','serve'),('rs_3','serve'),('rs_4','serve'),('rs_5','serve'),('rs_6','serve'),('rs_7','serve'),('rs_8','serve'),('rs_9','serve'),
+('rs_10','serve'),('rs_11','serve'),('rs_12','kettle'),('rs_13','serve'),('rs_14','serve'),('rs_15','serve'),('rs_16','kettle');
+
+INSERT INTO food_service VALUES('fs_1','food_1'),('fs_2','food_2'),('fs_3','food_3'),('fs_4','food_4'),('fs_5','food_5'),('fs_6','food_6'),('fs_7','food_7'),('fs_8','food_8'),
+('fs_9','food_9'),('fs_10','food_10'),('fs_12','food_12'),('fs_13','food_13'),
+('fs_14','food_14'),('fs_15','food_15');
+
+INSERT INTO room VALUES('r_1','gh_1',1000,'yes','yes',2,3),('r_2','gh_1',1500,'yes','yes',3,3),('r_3','gh_1',1000,'yes','yes',2,2),('r_4','gh_1',800,'yes','yes',1,1),
+('r_5','gh_1',1000,'yes','yes',2,2),('r_6','gh_2',1000,'yes','yes',2,2),('r_7','gh_2',1000,'yes','yes',2,3),('r_8','gh_2',1000,'yes','yes',2,1);
+
+INSERT INTO staff VALUES('s_1','sn_1',1999999991,'sweep'),('s_2','sn_2',1999999992,'sweep'),('s_3','sn_3',1999999993,'clean'),('s_4','sn_4',1999999994,'receptionist'),
+('s_5','sn_5',1999999995,'sweep'),('s_6','sn_6',1999999996,'clean'),('s_7','sn_1',1999999997,'sweep'),('s_8','sn_8',1999999998,'receptionist'),('s_9','sn_9',1999999999,'sweep');
+
+
+INSERT INTO work_in VALUES('gh_1','s_1','2022-11-16'),('gh_1','s_2','2022-11-17'),('gh_1','s_3','2022-11-18'),('gh_2','s_1','2022-11-16'),('gh_2','s_2','2022-11-17'),
+('gh_2','s_3','2022-11-18'),('gh_3','s_1','2022-11-16'),('gh_3','s_2','2022-11-17'),('gh_3','s_3','2022-11-18'),('gh_1','s_4','2022-11-16'),('gh_1','s_5','2022-11-16');
+
+INSERT INTO bill VALUES('b_1','g_1',1000),('b_2','g_1',2100),('b_3','g_3',2200),('b_14','g_3',1200),('b_4','g_4',1300),('b_5','g_5',1400),('b_6','g_6',1500),('b_7','g_1',1600),
+('b_8','g_2',1700),('b_9','g_3',1800),('b_10','g_4',1900),('b_11','g_5',2100),('b_12','g_6',1900),('b_13','g_7',1800);
+
+                                                       PROCEDURES AND TRIGGERS:
+
+DELIMITER $$
+CREATE TRIGGER after_bookings_insert
+AFTER INSERT
+ON bookings FOR EACH ROW
+BEGIN
+UPDATE room SET available = 'no' WHERE room.r_id = new.r_id;
+END $$
+DELIMITER;
+
+
+
+delimiter $$ 
+CREATE EVENT update_room_availability  ON SCHEDULE EVERY 1 HOUR STARTS CURRENT_TIMESTAMP DO UPDATE Room SET available= 'yes'  WHERE room. r_id 
+NOT IN ( SELECT DISTINCT (bookings.r_id) FROM bookings WHERE bookings.end_date > CURDATE());
+
+delimiter ;
+
+DELIMITER $$
+CREATE PROCEDURE monthly_expenditure ( IN iYear_Month varchar(5),IN year_mm varchar(5))
+BEGIN
+SELECT gh_id, SUM(amount) AS Total_Expenditure FROM cost WHERE MONTH(date_1)= iYear_Month AND YEAR(date_1) GROUP BY gh_id;
+END $$
+DELIMITER ;
+
+
+delimiter $$
+CREATE PROCEDURE generate_bill(IN ig_id varchar(10)) BEGIN
+SELECT * FROM bill WHERE g_id = ig_id;
+ END $$
+DELIMITER ;                                                
+                                                       QUERIES:
+
+
+INSERT INTO bookings VALUES('r_1','g_1','2022-11-18','2022-11-19');
+
+CALL monthly_expenditure('11','2022');
+
+ CALL generate_bill('g_1');
+
+SELECT guest.g_id, guest.name, room.r_id, room.bed_count, month(bookings.start_date), bookings.end_date FROM guest INNER JOIN bookings
+ON bookings.g_id = guest.g_id INNER JOIN room ON room.r_id = bookings.r_id GROUP BY month(bookings.start_date);
+
+SELECT bill.b_id, bill.g_id, month(bill.date) AS Food_Billing_Month, bill.amount, food_service.food_item FROM bill INNER JOIN
+ food_service ON bill.b_id= food_service.fs_id GROUP BY Food_Billing_Month;
+
+SELECT staff.s_id, staff.name, guesthouse.gh_id, guesthouse.name, work_in.date
+FROM guesthouse
+INNER JOIN work_in ON guesthouse.gh_id= work_in.gh_id INNER JOIN Staff ON staff.s_id = work_in.s_id
+ORDER BY work_in.date DESC;
+
+SELECT* FROM room WHERE availability=’yes’;
+
+
+
+
+
